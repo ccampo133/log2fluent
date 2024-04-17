@@ -1,0 +1,36 @@
+builds:
+  - id: log2fluent
+    main: .
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - "-s -w -X main.version=v{{ .Version }}"
+    goos:
+      - darwin
+#      - linux
+#      - windows
+    goarch:
+      - amd64
+#      - arm64
+#      - "386"
+    ignore:
+      - goos: darwin
+        goarch: "386"
+    binary: log2fluent
+    env:
+      - CGO_ENABLED=0
+signs:
+  - artifacts: checksum
+#    cmd: gpg2
+#    args:
+#      - "--batch"
+#      - "-u"
+#      - "{{ .Env.GPG_FINGERPRINT }}"
+#      - "--output"
+#      - "${signature}"
+#      - "--detach-sign"
+#      - "${artifact}"
+archives:
+  - format: zip
+    name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}"
