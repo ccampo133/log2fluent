@@ -1,0 +1,48 @@
+version: 2
+builds:
+  - id: log2fluent
+    binary: log2fluent
+    main: .
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    ldflags:
+      - "-s -w -X main.version=v{{ .Version }}"
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - "386"
+    ignore:
+      - goos: darwin
+        goarch: "386"
+    env:
+      - CGO_ENABLED=0
+signs:
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "-u"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+archives:
+  - format: zip
+dockers:
+  - id: log2fluent
+    image_templates:
+      - "ghcr.io/ccampo133/log2fluent:{{ .Tag }}"
+      - "ghcr.io/ccampo133/log2fluent:latest"
+    build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.url={{ .Env.REPO_URL }}"
+      - "--label=org.opencontainers.image.source={{ .Env.REPO_URL }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=Apache-2.0"
