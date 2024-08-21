@@ -20,7 +20,7 @@ This is a simple and effective way to collect logs, but it has some baggage such
 as potential disk I/O overhead, log rotation requirements, etc. In some
 (admittedly rare) scenarios, such as those with limited resources or with
 ultra-high-throughput requirements, it may be beneficial to avoid writing logs
-to disk and instead stream them directly to fluent.
+to disk and instead stream them directly to Fluent.
 
 If you're using Docker, the first approach I would recommend is to use Docker's
 native logging driver for
@@ -103,15 +103,15 @@ This configuration sets up two
 
 1. A Unix domain socket at `stdout.sock` (relative to the directory where
    Fluent Bit is run from) that listens for log messages and prefixes their
-   incoming tag prefix `stdout`.
-2. A TCP socket that listens on `0.0.0.0:24224` and prefixes incoming log
-   messages with `stderr`.
+   incoming tag with the prefix `stdout`.
+2. A TCP socket that listens on `0.0.0.0:24224` and prefixes their incoming tag
+   with the prefix `stderr`.
 
 The idea behind this configuration is to separate and distinguish logs from
 `stdout` and `stderr`.
 
 It also establishes a single output that simply writes all incoming log messages
-Fluent Bit's stdout.
+Fluent Bit's stdout stream.
 
 For this example, create the above configuration in a file called
 `fluent-bit.conf` in some directory. You can then run Fluent Bit in a terminal
@@ -121,8 +121,8 @@ with this configuration like so:
 fluent-bit --quiet -c fluent-bit.conf
 ```
 
-Next, create a small shell script called `hello.sh` to simulate an application
-that writes logs to `stdout` and `stderr`:
+Next, create a small shell script called `hello.sh` in the same directory to
+simulate an application that writes logs to `stdout` and `stderr`:
 
 ```bash
 #!/bin/sh
